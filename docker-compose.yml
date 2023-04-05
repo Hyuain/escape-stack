@@ -5,6 +5,8 @@ services:
     build: ${TERMINAL_CODE_PATH}
     ports:
       - "8888:8888"
+    depends_on:
+      - server
   server:
     build: ${SERVER_CODE_PATH}
     volumes:
