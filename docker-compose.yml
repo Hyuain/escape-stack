@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  terminal:
+    build: ${TERMINAL_CODE_PATH}
+    ports:
+      - "8888:8888"
+  server:
+    build: ${SERVER_CODE_PATH}
+    volumes:
+      - ${SERVER_CODE_PATH}:/app
+    command: rails server -b 0.0.0.0
+    depends_on:
+      - database
+      - redis
+    environment:
+      RAILS_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
+      DATABASE_USER: ${POSTGRES_USER}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_URL: redis://redis:6379/1
+  chitchat:
+    build: ${CHITCHAT_CODE_PATH}
+  database:
+    image: postgres:13
+    volumes:
+      - escape_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+  redis:
+    image: redis:7
+
+volumes:
+  bundle_cache:
+  escape_data:
